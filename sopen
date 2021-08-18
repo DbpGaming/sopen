@@ -6,6 +6,7 @@ case $(echo "$1" | tr '[:upper:]' '[:lower:]') in
 https://*.png | https://*.jpg) feh "$1";;
 *.png | *.jpg) sxiv "$1";;
 *.nes) mesen "$1";;
+*.sfc) bsnes "$1";;
 *youtube.com/watch* | *yewtu.be/watch* | *youtu.be*) mpv "$1";;
 *youtube.com*) links $(echo "$1" | sed -e 's/youtube.com/yewtu.be/g');;
 https://* | *.htm | *.html) links "$1";;
