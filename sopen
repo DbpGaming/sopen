@@ -3,6 +3,8 @@
 case $(echo "$1" | tr '[:upper:]' '[:lower:]') in
 *.epub | *.pdf | *.cb[zr] | *.djvu) zathura "$1";;
 *.mkv | *.mp4 | *.m4v | *.mp3 | *.flac) mpv "$1";;
+https://*.png | https://*.jpg) feh "$1";;
+*.png | *.jpg) sxiv "$1";;
 *.nes) mesen "$1";;
 https://www.youtube.* | https://youtu.be*) mpv "$1";;
 https://* | *.htm | *.html) links "$1";;
