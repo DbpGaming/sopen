@@ -1,4 +1,4 @@
-case $1 in
-*.[Ee][Pp][Uu][Bb] | *.[Pp][Dd][Ff] | *.[Cc][Bb][ZzRr] | *.[Dd][Jj][Vv][Uu]) zathura "$1";;
-*) vis $1;;
+case $(echo $1 | tr '[:upper:]' '[:lower:]') in
+*.epub | *.pdf | *.cb[zr] | *.djvu) zathura "$1";;
+*) vis "$1";;
 esac
