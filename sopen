@@ -1,4 +1,6 @@
-case $(echo $1 | tr '[:upper:]' '[:lower:]') in
+#!/bin/sh
+
+case $(echo "$1" | tr '[:upper:]' '[:lower:]') in
 *.epub | *.pdf | *.cb[zr] | *.djvu) zathura "$1";;
 *.youtube.* | *youtu.be*) mpv "$1";;
 https://*) links "$1";;
