@@ -14,6 +14,11 @@ MULTIEMU="mednafen"
 NES="mesen"
 SNES="bsnes"
 
+if [ -z "$1" ]
+then
+	return 0
+fi
+
 case $(echo "$1" | tr '[:upper:]' '[:lower:]') in
 *.epub) $EPUB "$1";;
 *.pdf) $PDF "$1";;
