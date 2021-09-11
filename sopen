@@ -2,10 +2,10 @@
 
 if [ -z "$ISGUI" ]
 then
-	HTTP="st -e links"
+	HTTP="links"
 	VIDEO="mpv"
-	AUDIO="st -e mpv"
-	GOPHER="st -e lynx"
+	AUDIO="mpv"
+	GOPHER="lynx"
 	IMAGE="sxiv"
 	URL_IMAGE="feh"
 	BOOKS="zathura"
@@ -13,10 +13,10 @@ then
 	NES="mesen"
 	SNES="bsnes"
 else
-	HTTP="links"
+	HTTP="st -e links"
 	VIDEO="mpv"
-	AUDIO="mpv"
-	GOPHER="lynx"
+	AUDIO="st -e mpv"
+	GOPHER="st -e lynx"
 	IMAGE="sxiv"
 	URL_IMAGE="feh"
 	BOOKS="zathura"
