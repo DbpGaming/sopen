@@ -1,39 +1,60 @@
 #!/bin/sh
-VIDEO="mpv"
-AUDIO="mpv"
-HTTP="links"
-GOPHER="lynx"
-IMAGE="sxiv"
-URL_IMAGE="feh"
-BOOKS="zathura"
+
+if [ -z "$ISGUI" ]
+then
+	HTTP="st -e links"
+	VIDEO="mpv"
+	AUDIO="st -e mpv"
+	GOPHER="st -e lynx"
+	IMAGE="sxiv"
+	URL_IMAGE="feh"
+	BOOKS="zathura"
+	MULTIEMU="mednafen"
+	NES="mesen"
+	SNES="bsnes"
+else
+	HTTP="links"
+	VIDEO="mpv"
+	AUDIO="mpv"
+	GOPHER="lynx"
+	IMAGE="sxiv"
+	URL_IMAGE="feh"
+	BOOKS="zathura"
+	MULTIEMU="mednafen"
+	NES="mesen"
+	SNES="bsnes"
+fi
+
 COMIC=$BOOKS
 PDF=$BOOKS
 EPUB=$BOOKS
 DJVU=$BOOKS
-MULTIEMU="mednafen"
-NES="mesen"
-SNES="bsnes"
 
-if [ -z "$1" ]
+if [ -z "$FILE" ]
 then
-	return 0
+	if [ -z "$1" ]
+	then
+		return 0
+	else
+		FILE=$1
+	fi
 fi
 
-case $(echo "$1" | tr '[:upper:]' '[:lower:]') in
-*.epub) $EPUB "$1";;
-*.pdf) $PDF "$1";;
-*.cb[zr] | *.cb) $COMIC "$1";;
-*.djvu) $DJVU "$1";;
-*.mkv | *.mp4 | *.m4v) $VIDEO "$1";;
-*.mp3 | *.flac) $AUDIO "$1";;
-https://*.png | https://*.jpg | http://*.png | http://*.jpg) $URL_IMAGE "$1";;
-*.png | *.jpg) $IMAGE "$1";;
-*.nes) $NES "$1";;
-*.sfc) $SNES "$1";;
-*youtube.com/watch* | *yewtu.be/watch* | *youtu.be*) $VIDEO "$1";;
-*youtube.com*) $HTTP "$(echo "$1" | sed -e 's/youtube.com/yewtu.be/g')";;
-*twitter.com/*) $HTTP "$(echo "$1" | sed -e 's/twitter.com/nitter.net/g')";;
-https://* | http://* | *.htm | *.html) $HTTP "$1";;
-gopher://*) $GOPHER "$1";;
-*) vis "$1";;
+case $(echo "$FILE" | tr '[:upper:]' '[:lower:]') in
+*.epub) $EPUB "$FILE";;
+*.pdf) $PDF "$FILE";;
+*.cb[zr] | *.cb) $COMIC "$FILE";;
+*.djvu) $DJVU "$FILE";;
+*.mkv | *.mp4 | *.m4v) $VIDEO "$FILE";;
+*.mp3 | *.flac) $AUDIO "$FILE";;
+https://*.png | https://*.jpg | http://*.png | http://*.jpg) $URL_IMAGE "$FILE";;
+*.png | *.jpg) $IMAGE "$FILE";;
+*.nes) $NES "$FILE";;
+*.sfc) $SNES "$FILE";;
+*youtube.com/watch* | *yewtu.be/watch* | *youtu.be*) $VIDEO "$FILE";;
+*youtube.com*) $HTTP "$(echo "$FILE" | sed -e 's/youtube.com/yewtu.be/g')";;
+*twitter.com/*) $HTTP "$(echo "$FILE" | sed -e 's/twitter.com/nitter.net/g')";;
+https://* | http://* | *.htm | *.html) $HTTP "$FILE";;
+gopher://*) $GOPHER "$FILE";;
+*) herbe "$FILE";;
 esac
