@@ -56,5 +56,5 @@ https://*.png | https://*.jpg | http://*.png | http://*.jpg) $URL_IMAGE "$FILE";
 *twitter.com/*) $HTTP "$(echo "$FILE" | sed -e 's/twitter.com/nitter.net/g')";;
 https://* | http://* | *.htm | *.html) $HTTP "$FILE";;
 gopher://*) $GOPHER "$FILE";;
-*) herbe "$FILE";;
+*) $EDITOR "$FILE";;
 esac
