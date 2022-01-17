@@ -1,60 +1,59 @@
 #!/bin/sh
 
-if [ -z "$ISGUI" ]
-then
-	HTTP="links"
-	VIDEO="mpv"
-	AUDIO="mpv"
-	GOPHER="lynx"
-	IMAGE="sxiv"
-	URL_IMAGE="feh"
-	BOOKS="zathura"
-	MULTIEMU="mednafen"
-	NES="mesen"
-	SNES="bsnes"
-else
-	HTTP="st -e links"
-	VIDEO="mpv"
-	AUDIO="st -e mpv"
-	GOPHER="st -e lynx"
-	IMAGE="sxiv"
-	URL_IMAGE="feh"
-	BOOKS="zathura"
-	MULTIEMU="mednafen"
-	NES="mesen"
-	SNES="bsnes"
-fi
+[ -z "$ISGUI" ] && TERMINAL="" || TERMINAL="st -e "
+[ -z "$FILE" ] && [ -z "$1" ] && return 0 || FILE=$1
 
-COMIC=$BOOKS
-PDF=$BOOKS
-EPUB=$BOOKS
-DJVU=$BOOKS
+HTTP=$TERMINAL"links"
+AUDIO=$TERMINAL"mpv"
+GOPHER=$TERMINAL"lynx"
+VID="mpv"
+IMG="sxiv"
+URL_IMG="feh"
+BOOKS="zathura"
+MED="mednafen"
+N64="mupen64plus"
+DOL="dolphin-emu"
+DS="melonDS"
+SDC="reicast"
 
-if [ -z "$FILE" ]
-then
-	if [ -z "$1" ]
-	then
-		return 0
-	else
-		FILE=$1
-	fi
-fi
+loadlzma(){
+	GFILE="$(echo "$FILE" | sed -e 's/.lzma//g' | sed 's|.*[/:]||')"
+	SFILE="$(echo "$FILE" | sed -e 's/\..*\.lzma/.sav/g' | sed 's|.*[/:]||')"
+	SOFILE="$(echo "$FILE" | sed -e 's/\..*\.lzma/.sav/g')"
+	SNFILE="$(echo "$FILE" | sed -e 's/\....\.lzma/.srm/g' | sed 's|.*[/:]||')"
+	SNOFILE="$(echo "$FILE" | sed -e 's/\....\.lzma/.srm/g')"
+	[ -e "$SFILE" ] && cp -f "$SFILE" "/tmp/$SFILE"
+	[ -e "$SNFILE" ] && cp -f "$SNFILE" "/tmp/$SNFILE"
+	lzcat -k "$FILE" > "/tmp/$GFILE"
+	$1 "/tmp/$GFILE"
+	rm "/tmp/$GFILE"
+	[ -e "/tmp/$SFILE" ] && mv -f "/tmp/$SFILE" "$SOFILE"
+	[ -e "/tmp/$SNFILE" ] && mv -f "/tmp/$SNFILE" "$SNOFILE"
+}
+
+loadcue(){
+	BFILE="$(echo "$FILE" | sed -e 's/.cue/.bin.gz/g')"
+	GFILE="$(echo "$FILE" | sed -e 's/.cue/.bin/g')"
+	[ -e "$BFILE" ] && cp -f "$FILE" "/tmp/$FILE" && zcat -k "$BFILE" > "/tmp/$GFILE" || $MED "$FILE"
+	[ -e "$BFILE" ] && $MED "/tmp/$FILE" && rm "/tmp/$FILE" && rm "/tmp/$GFILE"
+}
 
 case $(echo "$FILE" | tr '[:upper:]' '[:lower:]') in
-*.epub) $EPUB "$FILE";;
-*.pdf) $PDF "$FILE";;
-*.cb[zr] | *.cb) $COMIC "$FILE";;
-*.djvu) $DJVU "$FILE";;
-*.mkv | *.mp4 | *.m4v) $VIDEO "$FILE";;
+*.epub | *.pdf | *.cb[zr] | *.cb | *.djvu) $BOOKS "$FILE";;
+*.mkv | *.mp4 | *.m4v) $VID "$FILE";;
 *.mp3 | *.flac) $AUDIO "$FILE";;
-https://*.png | https://*.jpg | http://*.png | http://*.jpg) $URL_IMAGE "$FILE";;
-*.png | *.jpg) $IMAGE "$FILE";;
-*.nes) $NES "$FILE";;
-*.sfc) $SNES "$FILE";;
-*youtube.com/watch* | *yewtu.be/watch* | *youtu.be*) $VIDEO "$FILE";;
-*youtube.com*) $HTTP "$(echo "$FILE" | sed -e 's/youtube.com/yewtu.be/g')";;
-*twitter.com/*) $HTTP "$(echo "$FILE" | sed -e 's/twitter.com/nitter.net/g')";;
-https://* | http://* | *.htm | *.html) $HTTP "$FILE";;
+https://*.png | https://*.jpg | http://*.png | http://*.jpg) $URL_IMG "$FILE";;
+*.png | *.jpg) $IMG "$FILE";;
+*.gcz | *.iso | *.ciso | *.wbfs | *.wad) $DOL "$FILE";;
+*.cdi | .gdi) $SDC "$FILE";;
+*.cue) loadcue;;
+*.nes.lzma | *.sfc.lzma | *.smc.lzma | *.gb.lzma | *.gbc.lzma | *.gba.lzma | *.gen.lzma) loadlzma $MED;; #mednafen can do gzipped roms but not lzma roms.
+*.[zn]64.lzma) loadlzma $N64;;
+*.gcz.lzma | *.iso.lzma | *.ciso.lzma | *.wbfs.lzma) loadlzma $DOL;; #this really is just a hold over until we can make .nkit.gcz on linux
+*.nds.lzma) loadlzma $DS;;
+*.cdi.lzma) loadlzma $SDC;;
+*youtube.com/watch* | *yewtu.be/watch* | *youtu.be*) $VID "$FILE";;
+https://* | http://* | *.htm | *.html) $HTTP "$(echo "$FILE" | sed -e 's/youtube.com/yewtu.be/g' | sed -e 's/twitter.com/nitter.net/g')";;
 gopher://*) $GOPHER "$FILE";;
 *) $EDITOR "$FILE";;
 esac
